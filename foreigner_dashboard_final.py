@@ -82,7 +82,7 @@ def main():
             "비율(%)": [33.0, 17.0, 4.5, 4.1, 41.4],
             "인원수(만명)": [45.0, 22.8, 6.0, 5.5, 55.7]
         }
-        pie_data = pd.DataFrame(pie_data)
+        pie_df = pd.DataFrame(pie_data)
 
         # 2. 파이차트 만들기 (초록 계열 사용)
         green_colors = [
@@ -93,8 +93,9 @@ def main():
             "#B7E4C7"   # 아주 밝은 초록
         ]
 
-        fig = px.pie(
-            pie_data,
+        # pie chart
+        pie_fig = px.pie(
+            pie_df,
             names="국적",
             values="비율(%)",
             title="국적별 분포",
@@ -103,38 +104,98 @@ def main():
         )
 
         # 라벨에 퍼센트 + 인원수 같이 보이도록
-        fig.update_traces(
+        pie_fig.update_traces(
             textposition="inside",
             textinfo="label+percent",
             hovertemplate="<b>%{label}</b><br>비율: %{percent:.1%}<br>인원수: %{customdata}만명",
-            customdata=pie_data["인원수(만명)"],
+            customdata=pie_df["인원수(만명)"].values,
         )
 
         # 3. 화면 배치: 왼쪽 파이차트, 오른쪽 표
         col1, col2 = st.columns([2, 1])
 
         with col1:
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(pie_fig, use_container_width=True)
 
         with col2:
             st.markdown("#### 세부 데이터")
             st.dataframe(
-                pie_data.style.format({
+                pie_df.style.format({
                     "비율(%)": "{:.1f}%",
                     "인원수(만명)": "{:.1f}만명",
                 }),
                 use_container_width=True,
             )
-        inbank_data = pd.DataFrame({
-            "테이블명": ["고객정보", "수신상품 가입내역", "당발송금거래 ", "타발송금거래"],
-            "컬럼명": ['고객번호, 고객명, 국적, 비자종류, 나이, 월소득, 주소', '고객번호, 계좌번호, 가입상품종류, 상품가입금액, 가입일자', '고객번호, 송금종류, 송금국가, 송금금액, 송금목적, 지정항목', '고객번호, 송금종류, 송금국가, 송금금액, 송금목적, 지정항목']
-        })
 
-        st.table(inbank_data)  
         page4 = Image.open('page4.png')
         centered_image(page4)
-        page5 = Image.open('page5.png')
-        centered_image(page5)        
+        page5_0 = Image.open('page5_0.png')
+        centered_image(page5_0)
+        cols = st.columns([2, 1])
+        with cols[0]:
+            visa_data = {
+                "비자 계열": ["F계열(영주권, 결혼이민)", "E계열(취업)", "D계열(유학, 연수)", "H계열(워킹홀리데이, 방문취업)", "기타(Others)"],
+                "인원수": [517399, 400033, 250374, 104980, 75840],
+                "비율": [35, 27, 20, 10, 5]  # 예시 % (그래프 이미지 스타일과 유사하게)
+            }
+
+            visa_df = pd.DataFrame(visa_data)
+
+            # 그래프 객체 생성
+            visa_fig = make_subplots(
+                specs=[[{"secondary_y": True}]]
+            )
+
+            # 막대그래프
+            visa_fig.add_trace(
+                go.Bar(
+                    x=visa_df["비자 계열"],
+                    y=visa_df["인원수"],
+                    name="인원수",
+                    marker_color=["#504A8F", "#2A6777", "#2B8C81", "#82C45D", "#9CD670"],
+                    text=visa_df["인원수"],
+                    textposition='outside'
+                ),
+                secondary_y=False,
+            )
+
+            # 선그래프 (이중축)
+            visa_fig.add_trace(
+                go.Scatter(
+                    x=visa_df["비자 계열"],
+                    y=visa_df["비율"],
+                    name="비율 (%)",
+                    mode="lines+markers+text",
+                    text=visa_df["비율"],
+                    textposition="top center",
+                    marker=dict(size=8, color="red"),
+                    line=dict(color="red", width=2)
+                ),
+                secondary_y=True,
+            )
+
+            visa_fig.update_layout(
+                title="비자 계열별 외국인 인원수와 비율",
+                xaxis=dict(title="비자 계열"),
+                yaxis=dict(title="인원수 (명)", showgrid=True),
+                yaxis2=dict(
+                    title="비율 (%)",
+                    overlaying="y",
+                    side="right",
+                    showgrid=False,
+                    range=[0, 40]
+                ),
+                template="simple_white",
+                width=950,
+                height=700
+            )
+
+            st.plotly_chart(visa_fig, use_container_width=True)
+
+        with cols[1]:
+            page5 = Image.open('page5.png')
+            centered_image(page5)
+            
         page6 = Image.open('page6.png')
         centered_image(page6)        
         page7 = Image.open('page7.png')
@@ -328,9 +389,9 @@ def main():
                 by=sort_by, 
                 ascending=(sort_order == "Ascending")
             )
-
-            
-        st.dataframe(df_dummy, use_container_width=True, height=400)
+            st.dataframe(sorted_df, use_container_width=True, height=400)
+        else:
+            st.dataframe(df_dummy, use_container_width=True, height=400)
 
         st.markdown("<h3 style='color:#008486; background-color: #f0f9f8; '>더미 데이터 생성</h3>", unsafe_allow_html=True)
     
@@ -392,6 +453,8 @@ def main():
                 file_name="foreigner_ingu_merged2.csv",
                 mime="text/csv"
             )
+        else:
+            st.dataframe(foreigner_ingu_merged2, use_container_width=True, height=400)
     
     # Footer
     st.markdown("---")
