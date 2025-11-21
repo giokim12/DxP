@@ -225,7 +225,10 @@ def main():
         }
         </style>
         """, unsafe_allow_html=True)
-        with st.expander("✍️더미데이터 생성 조건 (펼치기) 🔻"):
+
+        st.markdown("---")
+        st.subheader("✍️더미데이터 생성 세부 조건")
+        with st.expander("더미데이터 생성 조건 (펼치기) 🔻"):
 
             st.markdown("""
                 ### <더미데이터 생성조건>
@@ -377,13 +380,14 @@ def main():
                 - 해당 행의 **‘국적’** 컬럼값과 동일하게 입력
 
                 """)
-
+        st.markdown("---")
         df_dummy = pd.read_csv('preprocessed_data.csv')
-        st.write(f"Displaying {len(df_dummy):,} records")
+        st.subheader("📖더미데이터 생성 결과")
+        st.write(f"총 {len(df_dummy):,} 데이터 생성")
         
         # Column selection
         display_cols = st.multiselect(
-            "Select columns to display:",
+            "선택된 컬럼 보기:",
             df_dummy.columns.tolist(),
             default=df_dummy.columns[:].tolist(),
             key="tab2_multiselect"
@@ -391,12 +395,12 @@ def main():
         
         if display_cols:
             # Sortable data table
-            sort_by = st.selectbox("Sort by:", display_cols, index=0, key="tab2_selectbox")
-            sort_order = st.radio("Sort order:", ["Ascending", "Descending"], key="tab2_radio")
+            sort_by = st.selectbox("기준 컬럼:", display_cols, index=0, key="tab2_selectbox")
+            sort_order = st.radio("정렬 순서:", ["오름차순", "내림차순"], key="tab2_radio")
             
             sorted_df = df_dummy[display_cols].sort_values(
                 by=sort_by, 
-                ascending=(sort_order == "Ascending")
+                ascending=(sort_order == "오름차순")
             )
             st.dataframe(sorted_df, use_container_width=True, height=400)
         else:
@@ -428,15 +432,15 @@ def main():
         centered_image(page17)
 
     with tab6:
-        st.header("📋 Data Table")
+        st.header("📋 분석에 사용한 데이터 ('24 12월말 등록외국인 현황)")
         
         # Data table with search and filter
-        st.subheader("Filtered Dataset")
-        st.write(f"Displaying {len(foreigner_ingu_merged2):,} records")
+        # st.subheader("Filtered Dataset")
+        # st.write(f"Displaying {len(foreigner_ingu_merged2):,} records")
         
         # Column selection
         display_cols = st.multiselect(
-            "Select columns to display:",
+            "지역 선택:",
             foreigner_ingu_merged2.columns.tolist(),
             default=foreigner_ingu_merged2.columns[:8].tolist(),
             key="tab6_multiselect"
@@ -444,15 +448,15 @@ def main():
         
         if display_cols:
             # Sortable data table
-            sort_by = st.selectbox("Sort by:", display_cols, key="tab6_selectbox")
-            sort_order = st.radio("Sort order:", ["Ascending", "Descending"], key="tab6_radio")
+            # sort_by = st.selectbox("Sort by:", display_cols, key="tab6_selectbox")
+            # sort_order = st.radio("Sort order:", ["Ascending", "Descending"], key="tab6_radio")
             
-            sorted_df = foreigner_ingu_merged2[display_cols].sort_values(
-                by=sort_by, 
-                ascending=(sort_order == "Ascending")
-            )
+            # sorted_df = foreigner_ingu_merged2[display_cols].sort_values(
+            #     by=sort_by, 
+            #     ascending=(sort_order == "Ascending")
+            # )
             
-            st.dataframe(sorted_df, use_container_width=True, height=400)
+            st.dataframe(foreigner_ingu_merged2, use_container_width=True, height=400)
             
             # Download filtered data
             csv = sorted_df.to_csv(index=False)
