@@ -80,6 +80,8 @@ def main():
         #     st.slider('값을 선택하세요')
         page3 = Image.open('page3.png')
         centered_image(page3)
+        page4 = Image.open('page4.png')
+        centered_image(page4)
         pie_data = {
             "국적": ["중국", "베트남", "네팔", "우즈베키스탄", "기타 국가"],
             "비율(%)": [33.0, 17.0, 4.5, 4.1, 41.4],
@@ -130,8 +132,7 @@ def main():
                 use_container_width=True,
             )
 
-        page4 = Image.open('page4.png')
-        centered_image(page4)
+
         page5_0 = Image.open('page5_0.png')
         centered_image(page5_0)
         cols = st.columns([2, 1])
