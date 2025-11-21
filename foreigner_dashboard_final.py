@@ -74,7 +74,10 @@ def main():
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🌎 주제 선정 배경 및 외국인 현황", "🧭 연구방법 및 데이터 수집", "📈 모의 데이터 구축", "💻 금융상품 추천 모델 개발", "📋 분석결과 및 활용방안", "📱 데이터"])
     
     with tab1:
-
+        # # 버튼 생성
+        # if st.button('클릭하세요'):
+        #     st.success('버튼이 눌렸습니다!')
+        #     st.slider('값을 선택하세요')
         page3 = Image.open('page3.png')
         centered_image(page3)
         pie_data = {
@@ -201,7 +204,7 @@ def main():
         page7 = Image.open('page7.png')
         centered_image(page7)         
 
-        st.markdown("---")
+
      
     with tab2:
         page8 = Image.open('page8.png')
@@ -210,7 +213,7 @@ def main():
         centered_image(page9)  
 
     with tab3:
-        st.markdown(f"<h3 style='color:#008486; background-color: #f0f9f8; '>📈 더미데이터 생성</h3>", unsafe_allow_html=True)
+        # st.markdown(f"<h3 style='color:#008486; background-color: #f0f9f8; '>📈 더미데이터 생성</h3>", unsafe_allow_html=True)
         page10 = Image.open('page10.png')
         centered_image(page10) 
         st.markdown("""
@@ -262,33 +265,39 @@ def main():
                 | H-1 | 100-200만원 | 20-40대 |
                 | H-2 | 300-400만원 | 20-40대 |
 
-                - 비자 비율:  
-                    - F계열 5%  
-                    - E계열 70%  
-                    - D계열 20%  
-                    - H계열 5%
+                | 비자 계열 | 비율  |
+                |:-----|:----|
+                | F계열 | 5%   |
+                | E계열 | 70%  |
+                | D계열 | 20%  |
+                | H계열 | 5%   |
 
                 #### 3. 국적 / 비율  
-                - 중국 : 36%  
-                - 베트남 : 20%  
-                - 네팔 : 4%  
-                - 우즈베키스탄 : 4%  
-                - 캄보디아 : 4%  
-                - 인도네시아 : 4%  
-                - 필리핀 : 4%  
-                - 타이 : 3%  
-                - 미얀마 : 3%  
-                - 미국 : 3%  
-                - 몽골 : 3%  
-                - 스리랑카 : 2%
-                - 일본 : 2%
-                - 방글라데시 : 2%
-                - 카자흐스탄 : 1%
-                - 러시아(연방) : 1%
-                - 타이완 : 1%
-                - 파키스탄 : 1%
-                - 인도 : 1%
-                - 키르기즈 : 1%
+
+                nationality_data = {
+                    '국적': ['중국', '베트남', '네팔', '우즈베키스탄', '캄보디아', '인도네시아', '필리핀', '타이', '미얀마', '미국', '몽골',
+                            '스리랑카', '일본', '방글라데시', '카자흐스탄', '러시아(연방)', '타이완', '파키스탄', '인도', '키르기즈'],
+                    '비율': [36, 20, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1]
+                }
+                nationality_df = pd.DataFrame(nationality_data)
+                fig = px.bar(
+                    nationality_df, 
+                    x='국적', y='비율', 
+                    text='비율',
+                    color='국적',
+                    color_discrete_sequence=px.colors.qualitative.Set3,
+                    title='국적별 비율(%)'
+                )
+                fig.update_traces(texttemplate='%{text}%', textposition='outside')
+                fig.update_layout(
+                    showlegend=False,
+                    xaxis_title='국적',
+                    yaxis_title='비율 (%)',
+                    yaxis=dict(range=[0, 40]),
+                    height=500,
+                    margin=dict(l=20, r=20, t=50, b=20)
+                )
+                st.plotly_chart(fig, use_container_width=True)
 
                 #### 4. 국적별 가입상품 / 손님별 상품 가입 확률  
 
@@ -393,7 +402,7 @@ def main():
         else:
             st.dataframe(df_dummy, use_container_width=True, height=400)
 
-        st.markdown("<h3 style='color:#008486; background-color: #f0f9f8; '>더미 데이터 생성</h3>", unsafe_allow_html=True)
+        # st.markdown("<h3 style='color:#008486; background-color: #f0f9f8; '>더미 데이터 생성</h3>", unsafe_allow_html=True)
     
     with tab4:
         page11 = Image.open('page11.png')
